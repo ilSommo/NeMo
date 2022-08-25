@@ -43,12 +43,7 @@ class OrdinalFst(GraphFst):
         )
         graph_fem = shift_number_gender(graph_fem_ending) + pynutil.delete(" morphosyntactic_features: \"gender_fem")
 
-        # Apocope just changes tercero and primero. May occur if someone wrote 11.er (uncommon)
-        graph_apocope = (graph @ pynini.cdrewrite(graph_apocope, "", "", NEMO_SIGMA)) + pynutil.delete(
-            " morphosyntactic_features: \"apocope"
-        )
-
-        graph = graph_apocope | graph_masc | graph_fem
+        graph = graph_masc | graph_fem
 
         if not deterministic:
             # Plural graph
