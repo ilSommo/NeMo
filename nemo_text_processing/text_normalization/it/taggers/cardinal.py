@@ -116,7 +116,7 @@ class CardinalFst(GraphFst):
         graph_thousands_component_at_least_one_none_zero_digit = pynini.union(
             pynutil.delete("000") + graph_hundreds_component_at_least_one_none_zero_digit,
             graph_hundreds_component_at_least_one_none_zero_digit_no_one
-            + pynutil.insert(" mille")
+            + pynutil.insert(" mila")
             + ((insert_space + graph_hundreds_component_at_least_one_none_zero_digit) | pynutil.delete("000")),
             pynini.cross("001", "mille")
             + ((insert_space + graph_hundreds_component_at_least_one_none_zero_digit) | pynutil.delete("000")),
@@ -125,7 +125,7 @@ class CardinalFst(GraphFst):
         graph_thousands_component_at_least_one_none_zero_digit_no_one = pynini.union(
             pynutil.delete("000") + graph_hundreds_component_at_least_one_none_zero_digit_no_one,
             graph_hundreds_component_at_least_one_none_zero_digit_no_one
-            + pynutil.insert(" mille")
+            + pynutil.insert(" mila")
             + ((insert_space + graph_hundreds_component_at_least_one_none_zero_digit) | pynutil.delete("000")),
             pynini.cross("001", "mille")
             + ((insert_space + graph_hundreds_component_at_least_one_none_zero_digit) | pynutil.delete("000")),
