@@ -19,7 +19,7 @@ from nemo_text_processing.text_normalization.en.graph_utils import (
     GraphFst,
     delete_space,
 )
-from nemo_text_processing.text_normalization.it.graph_utils import roman_to_int, strip_accent
+from nemo_text_processing.text_normalization.it.graph_utils import strip_accent
 from nemo_text_processing.text_normalization.it.utils import get_abs_path
 from pynini.lib import pynutil
 
@@ -125,29 +125,6 @@ class OrdinalFst(GraphFst):
         accep_fem = delete_period + pynini.cross("ª", fem)
         accep_apocope = delete_period + pynini.cross("ᵉʳ", apocope)
 
-        # Managing Romanization
-        graph_roman = pynutil.insert("integer: \"") + roman_to_int(ordinal_graph) + pynutil.insert("\"")
-        if not deterministic:
-            # Introduce plural
-            plural = pynini.closure(pynutil.insert("/plural"), 0, 1)
-            accept_masc += plural
-            accep_fem += plural
-
-            # Romanizations have no morphology marker, so in non-deterministic case we provide option for all
-            insert_morphology = pynutil.insert(pynini.union(masc, fem)) + plural
-            insert_morphology |= pynutil.insert(apocope)
-            insert_morphology = (
-                pynutil.insert(" morphosyntactic_features: \"") + insert_morphology + pynutil.insert("\"")
-            )
-
-            graph_roman += insert_morphology
-
-        else:
-            # We insert both genders as default
-            graph_roman += pynutil.insert(" morphosyntactic_features: \"gender_masc\"") | pynutil.insert(
-                " morphosyntactic_features: \"gender_fem\""
-            )
-
         # Rest of graph
         convert_abbreviation = accept_masc | accep_fem | accep_apocope
 
@@ -159,7 +136,6 @@ class OrdinalFst(GraphFst):
             + convert_abbreviation
             + pynutil.insert("\"")
         )
-        graph = pynini.union(graph, graph_roman)
-
+        
         final_graph = self.add_tokens(graph)
         self.fst = final_graph.optimize()

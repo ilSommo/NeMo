@@ -139,36 +139,3 @@ def add_cardinal_apocope_fem(fst: 'pynini.FstLike') -> 'pynini.FstLike':
     strip = pynini.cross("una", "un") | pynini.cross("veintiuna", "veintiún")
     strip = pynini.cdrewrite(strip, "", pynini.union("[EOS]", "\""), NEMO_SIGMA)
     return fst @ strip
-
-
-def roman_to_int(fst: 'pynini.FstLike') -> 'pynini.FstLike':
-    """
-    Alters given fst to convert Roman integers (lower and upper cased) into Arabic numerals. Valid for values up to 1000.
-    e.g.
-        "V" -> "5"
-        "i" -> "1"
-
-    Args:
-        fst: Any fst. Composes fst onto Roman conversion outputs.
-    """
-
-    def _load_roman(file: str):
-        roman = load_labels(get_abs_path(file))
-        roman_numerals = [(x, y) for x, y in roman] + [(x.upper(), y) for x, y in roman]
-        return pynini.string_map(roman_numerals)
-
-    digit = _load_roman("data/roman/digit.tsv")
-    ties = _load_roman("data/roman/ties.tsv")
-    hundreds = _load_roman("data/roman/hundreds.tsv")
-
-    graph = (
-        digit
-        | ties + (digit | pynutil.add_weight(pynutil.insert("0"), 0.01))
-        | (
-            hundreds
-            + (ties | pynutil.add_weight(pynutil.insert("0"), 0.01))
-            + (digit | pynutil.add_weight(pynutil.insert("0"), 0.01))
-        )
-    ).optimize()
-
-    return graph @ fst
