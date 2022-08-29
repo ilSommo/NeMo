@@ -19,6 +19,7 @@ from contextlib import contextmanager
 from typing import List
 
 from nemo.collections.tts.torch.de_utils import german_text_preprocessing
+from nemo.collections.tts.torch.it_utils import italian_text_preprocessing
 from nemo.collections.tts.torch.en_utils import english_text_preprocessing
 from nemo.utils import logging
 from nemo.utils.decorators import experimental
@@ -222,6 +223,51 @@ class GermanCharsTokenizer(BaseCharsTokenizer):
             de_alphabet += de_ipa
         super().__init__(
             chars=de_alphabet,
+            punct=punct,
+            apostrophe=apostrophe,
+            add_blank_at=add_blank_at,
+            pad_with_space=pad_with_space,
+            non_default_punct_list=non_default_punct_list,
+            text_preprocessing_func=text_preprocessing_func,
+        )
+
+class ItalianCharsTokenizer(BaseCharsTokenizer):
+    # fmt: off
+    PUNCT_LIST = (  # Derived from LJSpeech and "/" additionally
+        ',', '.', '!', '?', '-',
+        ':', ';', '/', '"', '(',
+        ')', '[', ']', '{', '}',
+    )
+    # fmt: on
+
+    def __init__(
+        self,
+        punct=True,
+        apostrophe=True,
+        add_blank_at=None,
+        pad_with_space=False,
+        non_default_punct_list=None,
+        text_preprocessing_func=italian_text_preprocessing,
+        phonemes=True,
+    ):
+        """Deutsch char-based tokenizer.
+        Args:
+            punct: Whether to reserve grapheme for basic punctuation or not.
+            apostrophe: Whether to use apostrophe or not.
+            add_blank_at: Add blank to labels in the specified order ("last") or after tokens (any non None),
+             if None then no blank in labels.
+            pad_with_space: Whether to pad text with spaces at the beginning and at the end or not.
+            non_default_punct_list: List of punctuation marks which will be used instead default.
+            text_preprocessing_func: Text preprocessing function for correct execution of the tokenizer.
+             Currently, it only applies lower() function.
+        """
+
+        it_alphabet = "abcdefghijklmnopqrstuvwxyzàèéìòóù"
+        if phonemes:
+            it_ipa = "ɲʎŋɔəɛʃʒˈˌːθ"
+            it_alphabet += it_ipa
+        super().__init__(
+            chars=it_alphabet,
             punct=punct,
             apostrophe=apostrophe,
             add_blank_at=add_blank_at,
