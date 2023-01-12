@@ -101,12 +101,18 @@ class Normalizer:
         elif lang == 'es':
             from nemo_text_processing.text_normalization.es.taggers.tokenize_and_classify import ClassifyFst
             from nemo_text_processing.text_normalization.es.verbalizers.verbalize_final import VerbalizeFinalFst
+<<<<<<< HEAD
         elif lang == 'zh':
             from nemo_text_processing.text_normalization.zh.taggers.tokenize_and_classify import ClassifyFst
             from nemo_text_processing.text_normalization.zh.verbalizers.verbalize_final import VerbalizeFinalFst
         else:
             raise NotImplementedError(f"Language {lang} has not been supported yet.")
 
+=======
+        elif lang == 'it':
+            from nemo_text_processing.text_normalization.it.taggers.tokenize_and_classify import ClassifyFst
+            from nemo_text_processing.text_normalization.it.verbalizers.verbalize_final import VerbalizeFinalFst
+>>>>>>> a723ba2ca6dda446b842fdac4ff4163aabf859aa
         self.tagger = ClassifyFst(
             input_case=input_case,
             deterministic=deterministic,
@@ -474,7 +480,11 @@ def parse_args():
     input.add_argument("--text", dest="input_string", help="input string", type=str)
     input.add_argument("--input_file", dest="input_file", help="input file path", type=str)
     parser.add_argument('--output_file', dest="output_file", help="output file path", type=str)
+<<<<<<< HEAD
     parser.add_argument("--language", help="language", choices=["en", "de", "es", "zh"], default="en", type=str)
+=======
+    parser.add_argument("--language", help="language", choices=["en", "de", "es", "it"], default="en", type=str)
+>>>>>>> a723ba2ca6dda446b842fdac4ff4163aabf859aa
     parser.add_argument(
         "--input_case", help="input capitalization", choices=["lower_cased", "cased"], default="cased", type=str
     )
