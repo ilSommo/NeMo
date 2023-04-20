@@ -98,7 +98,7 @@ from omegaconf import OmegaConf
 
 
 @dataclass
-class HFDatasetConversionConfig:
+class HFDatasetConvertionConfig:
     # Nemo Dataset info
     output_dir: str  # path to output directory where the files will be saved
 
@@ -112,7 +112,6 @@ class HFDatasetConversionConfig:
     sampling_rate: int = 16000
     streaming: bool = False  # Whether to use Streaming dataset API. [NOT RECOMMENDED]
     num_proc: int = -1
-    ensure_ascii: bool = True  # When saving the JSON entry, whether to ensure ascii.
 
     # Placeholders. Generated internally.
     resolved_output_dir: str = ''
@@ -121,7 +120,7 @@ class HFDatasetConversionConfig:
     hydra: HydraConf = HydraConf(run=RunDir(dir="."))
 
 
-def prepare_output_dirs(cfg: HFDatasetConversionConfig):
+def prepare_output_dirs(cfg: HFDatasetConvertionConfig):
     """
     Prepare output directories and subfolders as needed.
     Also prepare the arguments of the config with these directories.
@@ -192,7 +191,7 @@ def prepare_audio_filepath(audio_filepath):
     return audio_filepath
 
 
-def build_map_dataset_to_nemo_func(cfg: HFDatasetConversionConfig, basedir):
+def build_map_dataset_to_nemo_func(cfg: HFDatasetConvertionConfig, basedir):
     """
     Helper method to run in batch mode over a mapped Dataset.
 
@@ -226,7 +225,7 @@ def build_map_dataset_to_nemo_func(cfg: HFDatasetConversionConfig, basedir):
 
 
 def convert_offline_dataset_to_nemo(
-    dataset: Dataset, cfg: HFDatasetConversionConfig, basedir: str, manifest_filepath: str,
+    dataset: Dataset, cfg: HFDatasetConvertionConfig, basedir: str, manifest_filepath: str
 ):
     """
     Converts a HF dataset to a audio-preprocessed Nemo dataset in Offline mode.
@@ -255,11 +254,12 @@ def convert_offline_dataset_to_nemo(
             del sample['audio']
             if 'file' in sample:
                 del sample['file']
-            manifest_f.write(f"{json.dumps(sample, ensure_ascii=cfg.ensure_ascii)}\n")
+
+            manifest_f.write(f"{json.dumps(sample)}\n")
 
 
 def convert_streaming_dataset_to_nemo(
-    dataset: IterableDataset, cfg: HFDatasetConversionConfig, basedir: str, manifest_filepath: str
+    dataset: IterableDataset, cfg: HFDatasetConvertionConfig, basedir: str, manifest_filepath: str
 ):
     """
     Converts a HF dataset to a audio-preprocessed Nemo dataset in Streaming mode.
@@ -301,10 +301,10 @@ def convert_streaming_dataset_to_nemo(
 
             manifest_line.update(sample)
 
-            manifest_f.write(f"{json.dumps(sample, ensure_ascii=cfg.ensure_ascii)}\n")
+            manifest_f.write(f"{json.dumps(manifest_line)}\n")
 
 
-def process_dataset(dataset: IterableDataset, cfg: HFDatasetConversionConfig):
+def process_dataset(dataset: IterableDataset, cfg: HFDatasetConvertionConfig):
     """
     Top level method that processes a given IterableDataset to Nemo compatible dataset.
     It also writes out a nemo compatible manifest file.
@@ -314,10 +314,6 @@ def process_dataset(dataset: IterableDataset, cfg: HFDatasetConversionConfig):
         cfg: HFDatasetConvertionConfig
     """
     dataset = dataset.cast_column("audio", Audio(cfg.sampling_rate, mono=True))
-
-    # for Common Voice, "sentence" is used instead of "text" to store the transcript.
-    if 'sentence' in dataset.features:
-        dataset = dataset.rename_column("sentence", "text")
 
     if cfg.split_output_dir is None:
         basedir = cfg.resolved_output_dir
@@ -344,7 +340,7 @@ def process_dataset(dataset: IterableDataset, cfg: HFDatasetConversionConfig):
 
 
 @hydra.main(config_name='hfds_config', config_path=None)
-def main(cfg: HFDatasetConversionConfig):
+def main(cfg: HFDatasetConvertionConfig):
     # Convert dataclass to omegaconf
     if is_dataclass(cfg):
         cfg = OmegaConf.structured(cfg)
@@ -403,7 +399,7 @@ def main(cfg: HFDatasetConversionConfig):
 
 
 # Register the dataclass as a valid config
-ConfigStore.instance().store(name='hfds_config', node=HFDatasetConversionConfig)
+ConfigStore.instance().store(name='hfds_config', node=HFDatasetConvertionConfig)
 
 if __name__ == '__main__':
     main()

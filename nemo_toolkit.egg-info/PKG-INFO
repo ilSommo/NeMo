@@ -1,0 +1,51 @@
+Metadata-Version: 2.1
+Name: nemo-toolkit
+Version: 1.15.0rc0
+Summary: NeMo - a toolkit for Conversational AI
+Home-page: https://github.com/nvidia/nemo
+Download-URL: https://github.com/NVIDIA/NeMo/releases
+Author: NVIDIA
+Author-email: nemo-toolkit@nvidia.com
+Maintainer: NVIDIA
+Maintainer-email: nemo-toolkit@nvidia.com
+License: Apache2
+Keywords: deep learning,machine learning,gpu,NLP,NeMo,nvidia,pytorch,torch,tts,speech,language
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Science/Research
+Classifier: Intended Audience :: Information Technology
+Classifier: Topic :: Scientific/Engineering
+Classifier: Topic :: Scientific/Engineering :: Mathematics
+Classifier: Topic :: Scientific/Engineering :: Image Recognition
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Classifier: Topic :: Software Development :: Libraries
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: Utilities
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Environment :: Console
+Classifier: Natural Language :: English
+Classifier: Operating System :: OS Independent
+Description-Content-Type: text/markdown
+Provides-Extra: test
+Provides-Extra: nemo_text_processing
+Provides-Extra: core
+Provides-Extra: common
+Provides-Extra: asr
+Provides-Extra: nlp
+Provides-Extra: tts
+Provides-Extra: slu
+Provides-Extra: all
+License-File: LICENSE
+
+NeMo (**Ne**ural **Mo**dules) is a toolkit for creating AI applications built around **neural modules**, conceptual blocks of neural networks that take *typed* inputs and produce *typed* outputs.
+
+**NeMo Core** provides common APIs all modules and models have to implement.
+
+**NeMo Collections**
+
+* ASR - collection of modules and models for building speech recognition networks
+* TTS - collection of modules and models for building speech synthesis networks
+* NLP - collection of modules and models for building NLP networks

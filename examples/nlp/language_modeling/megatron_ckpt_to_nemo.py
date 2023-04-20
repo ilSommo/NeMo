@@ -28,8 +28,8 @@ import os
 from argparse import ArgumentParser
 
 import torch
-from megatron.core import parallel_state
-from pytorch_lightning.plugins.environments import TorchElasticEnvironment
+from apex.transformer import parallel_state
+from lightning_lite.plugins.environments import TorchElasticEnvironment
 from pytorch_lightning.trainer.trainer import Trainer
 
 from nemo.collections.nlp.models.language_modeling.megatron_bart_model import MegatronBARTModel
@@ -121,9 +121,9 @@ def convert(local_rank, rank, world_size, args):
     app_state.model_parallel_size = app_state.tensor_model_parallel_size * app_state.pipeline_model_parallel_size
 
     parallel_state.initialize_model_parallel(
-        tensor_model_parallel_size=app_state.tensor_model_parallel_size,
-        pipeline_model_parallel_size=app_state.pipeline_model_parallel_size,
-        pipeline_model_parallel_split_rank=app_state.pipeline_model_parallel_split_rank,
+        tensor_model_parallel_size_=app_state.tensor_model_parallel_size,
+        pipeline_model_parallel_size_=app_state.pipeline_model_parallel_size,
+        pipeline_model_parallel_split_rank_=app_state.pipeline_model_parallel_split_rank,
     )
 
     app_state.pipeline_model_parallel_rank = parallel_state.get_pipeline_model_parallel_rank()

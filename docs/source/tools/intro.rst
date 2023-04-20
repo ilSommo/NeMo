@@ -10,7 +10,6 @@ NeMo provides a set of tools useful for developing Automatic Speech Recognitions
    ctc_segmentation
    speech_data_explorer
    comparison_tool
-   asr_evaluator
 
 
 There are also additional NeMo-related tools hosted in separate github repositories:

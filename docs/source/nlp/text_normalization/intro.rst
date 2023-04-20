@@ -6,7 +6,7 @@ NeMo supports Text Normalization (TN) and Inverse Text Normalization (ITN) tasks
 Rule-based (WFST) TN/ITN:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    wfst/intro
 
@@ -14,7 +14,7 @@ Rule-based (WFST) TN/ITN:
 Neural-based TN/ITN:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    neural_models
 

@@ -124,16 +124,6 @@ ENES
     
 --------------------
 
-EO
-^^
-
-.. csv-table::
-    :header-rows: 1
-    :align: left
-    :file: data/scores/eo/conformer_eo.csv
-    
---------------------
-
 ES
 ^^
 
@@ -212,13 +202,6 @@ IT
 .. csv-table::
     :header-rows: 1
     :align: left
-    :file: data/scores/it/conformer_it.csv
-    
---------------------
-
-.. csv-table::
-    :header-rows: 1
-    :align: left
     :file: data/scores/it/quartznet15x5_it.csv
     
 --------------------
@@ -245,13 +228,6 @@ PL
 
 RU
 ^^
-
-.. csv-table::
-    :header-rows: 1
-    :align: left
-    :file: data/scores/ru/conformer_ru.csv
-    
---------------------
 
 .. csv-table::
     :header-rows: 1

@@ -270,10 +270,8 @@ def load_list_write_manifest(
 def rebalance_json(data_dir, data_json, num, prefix):
     data = []
     seg = 0
-    with open(data_json, 'r') as f:
-        for line in f:
-            data.append(json.loads(line))
-
+    for line in open(data_json, 'r'):
+        data.append(json.loads(line))
     filename = data_json.split('/')[-1]
     fout_path = os.path.join(data_dir, prefix + "_" + filename)
 

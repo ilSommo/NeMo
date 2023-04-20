@@ -15,10 +15,7 @@
 import numpy as np
 import pytest
 
-from nemo.collections.tts.parts.preprocessing.audio_trimming import (
-    get_start_and_end_of_speech_frames,
-    pad_sample_indices,
-)
+from nemo.collections.tts.data.audio_trimming import get_start_and_end_of_speech_frames, pad_sample_indices
 
 
 class TestAudioTrimming:
