@@ -36,33 +36,45 @@ class DateFst(GraphFst):
             for False multiple transduction are generated (used for audio-based normalization)
     """
 
-    def __init__(self, ordinal: GraphFst, deterministic: bool = True, lm: bool = False):
-        super().__init__(name="date", kind="verbalize", deterministic=deterministic)
+    def __init__(
+        self, ordinal: GraphFst, deterministic: bool = True, lm: bool = False
+    ):
+        super().__init__(
+            name="date", kind="verbalize", deterministic=deterministic
+        )
 
         month = pynini.closure(NEMO_NOT_QUOTE, 1)
         day_cardinal = (
             pynutil.delete("day:")
             + delete_space
-            + pynutil.delete("\"")
+            + pynutil.delete('"')
             + pynini.closure(NEMO_NOT_QUOTE, 1)
-            + pynutil.delete("\"")
+            + pynutil.delete('"')
         )
         day = day_cardinal @ ordinal.suffix
 
-        month = pynutil.delete("month:") + delete_space + pynutil.delete("\"") + month + pynutil.delete("\"")
+        month = (
+            pynutil.delete("month:")
+            + delete_space
+            + pynutil.delete('"')
+            + month
+            + pynutil.delete('"')
+        )
 
         year = (
             pynutil.delete("year:")
             + delete_space
-            + pynutil.delete("\"")
+            + pynutil.delete('"')
             + pynini.closure(NEMO_NOT_QUOTE, 1)
             + delete_space
-            + pynutil.delete("\"")
+            + pynutil.delete('"')
         )
 
         # month (day) year
         graph_mdy = (
-            month + pynini.closure(delete_extra_space + day, 0, 1) + pynini.closure(delete_extra_space + year, 0, 1)
+            month
+            + pynini.closure(delete_extra_space + day, 0, 1)
+            + pynini.closure(delete_extra_space + year, 0, 1)
         )
         # may 5 -> may five
         if not deterministic and not lm:
@@ -83,17 +95,27 @@ class DateFst(GraphFst):
         )
 
         optional_preserve_order = pynini.closure(
-            pynutil.delete("preserve_order:") + delete_space + pynutil.delete("true") + delete_space
+            pynutil.delete("preserve_order:")
+            + delete_space
+            + pynutil.delete("true")
+            + delete_space
             | pynutil.delete("field_order:")
             + delete_space
-            + pynutil.delete("\"")
+            + pynutil.delete('"')
             + NEMO_NOT_QUOTE
-            + pynutil.delete("\"")
+            + pynutil.delete('"')
             + delete_space
         )
 
         final_graph = (
-            (plurals._priority_union(graph_mdy, pynutil.add_weight(graph_dmy, 0.0001), NEMO_SIGMA) | year)
+            (
+                plurals._priority_union(
+                    graph_mdy,
+                    pynutil.add_weight(graph_dmy, 0.0001),
+                    NEMO_SIGMA,
+                )
+                | year
+            )
             + delete_space
             + optional_preserve_order
         )

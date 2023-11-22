@@ -18,8 +18,12 @@ from nemo_text_processing.text_normalization.en.graph_utils import (
     NEMO_SPACE,
     GraphFst,
     delete_preserve_order,
+    delete_space,
+    delete_extra_space,
 )
-from nemo_text_processing.text_normalization.it.graph_utils import strip_cardinal_apocope
+from nemo_text_processing.text_normalization.it.graph_utils import (
+    strip_cardinal_apocope,
+)
 from nemo_text_processing.text_normalization.it.taggers.date import articles
 from pynini.lib import pynutil
 
@@ -36,41 +40,57 @@ class DateFst(GraphFst):
     """
 
     def __init__(self, deterministic: bool = True):
-        super().__init__(name="date", kind="verbalize", deterministic=deterministic)
-
-        day_cardinal = pynutil.delete("day: \"") + pynini.closure(NEMO_NOT_QUOTE, 1) + pynutil.delete("\"")
-        day = strip_cardinal_apocope(day_cardinal)
-
-        primero = pynini.cdrewrite(pynini.cross("uno", "primo"), "[BOS]", "[EOS]", NEMO_SIGMA)
-        day = (
-            (day @ primero) if deterministic else pynini.union(day, day @ primero)
-        )  # Primero for first day is traditional, but will vary depending on region
-
-        month = pynutil.delete("month: \"") + pynini.closure(NEMO_NOT_QUOTE, 1) + pynutil.delete("\"")
-
-        year = (
-            pynutil.delete("year: \"")
-            + articles
-            + NEMO_SPACE
-            + pynini.closure(NEMO_NOT_QUOTE, 1)
-            + pynutil.delete("\"")
+        super().__init__(
+            name="date", kind="verbalize", deterministic=deterministic
         )
 
-        # Insert preposition if wasn't originally with the year. This would mean a space was present
-        year = pynutil.add_weight(year, -0.001)
-        year |= (
-            pynutil.delete("year: \"")
-            + pynutil.insert("di ")
+        day_cardinal = (
+            pynutil.delete('day: "')
             + pynini.closure(NEMO_NOT_QUOTE, 1)
-            + pynutil.delete("\"")
+            + pynutil.delete('"')
+        )
+        day = strip_cardinal_apocope(day_cardinal)
+
+        primero = pynini.cdrewrite(
+            pynini.cross("uno", "primo"), "[BOS]", "[EOS]", NEMO_SIGMA
+        )
+        day = (
+            (day @ primero)
+            if deterministic
+            else pynini.union(day, day @ primero)
+        )  # Primero for first day is traditional, but will vary depending on region
+
+        month = (
+            pynutil.delete("month:")
+            + delete_space
+            + pynutil.delete('"')
+            + pynini.closure(NEMO_NOT_QUOTE, 1)
+            + pynutil.delete('"')
+        )
+
+        year = (
+            pynutil.delete("year:")
+            + delete_space
+            + pynutil.delete('"')
+            + pynini.closure(NEMO_NOT_QUOTE, 1)
+            + delete_space
+            + pynutil.delete('"')
         )
 
         # day month year
-        graph_dmy = day + pynini.cross(NEMO_SPACE, " di ") + month + pynini.closure(pynini.accep(" ") + year, 0, 1)
+        graph_dmy = (
+            day
+            + pynini.closure(delete_extra_space + month, 0, 1)
+            + pynini.closure(delete_extra_space + year, 0, 1)
+        )
 
-        graph_mdy = month + NEMO_SPACE + day + pynini.closure(NEMO_SPACE + year, 0, 1)
+        graph_mdy = (
+            month + NEMO_SPACE + day + pynini.closure(NEMO_SPACE + year, 0, 1)
+        )
         if deterministic:
-            graph_mdy += pynutil.delete(" preserve_order: true")  # Only accepts this if was explicitly passed
+            graph_mdy += pynutil.delete(
+                " preserve_order: true"
+            )  # Only accepts this if was explicitly passed
 
         self.graph = graph_dmy | graph_mdy
         final_graph = self.graph + delete_preserve_order
